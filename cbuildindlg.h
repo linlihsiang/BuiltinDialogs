@@ -20,5 +20,7 @@ private:
     QPushButton *pagePushBtn;
     QPushButton *progressPushBtn;
     QPushButton *printPushBtn;
+private slots://曹函數(slots)宣告
+    void doPushBtn();
 };
 #endif // CBUILDINDLG_H
