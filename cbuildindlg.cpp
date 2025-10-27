@@ -1,5 +1,8 @@
 #include "cbuildindlg.h"
 #include <QGridLayout>
+#include<QDebug>
+#include<QPalette>
+#include<QtWidgets>
 CBuildinDlg::CBuildinDlg(QWidget *parent)
     : QDialog(parent)
 {
@@ -27,6 +30,58 @@ CBuildinDlg::CBuildinDlg(QWidget *parent)
     setLayout(gridlayout);
     setWindowTitle(QStringLiteral("內建對話盒展示"));
     resize(400,300);
+    connect(colorPushBtn,SIGNAL(clicked()),this,SLOT(doPushBtn()));
+    connect(errorPushBtn,SIGNAL(clicked()),this,SLOT(doPushBtn()));
+    connect(filePushBtn,SIGNAL(clicked()),this,SLOT(doPushBtn()));
+    connect(fontPushBtn,SIGNAL(clicked()),this,SLOT(doPushBtn()));
+    connect(inputPushBtn,SIGNAL(clicked()),this,SLOT(doPushBtn()));
+    connect(pagePushBtn,SIGNAL(clicked()),this,SLOT(doPushBtn()));
+    connect(progressPushBtn,SIGNAL(clicked()),this,SLOT(doPushBtn()));
+    connect(printPushBtn,SIGNAL(clicked()),this,SLOT(doPushBtn()));
 }
 
 CBuildinDlg::~CBuildinDlg() {}
+
+void CBuildinDlg::doPushBtn()
+{
+    QPushButton *btn= qobject_cast<QPushButton*>(sender());
+    if(btn==colorPushBtn)
+    {
+        //qDebug()<<"Hello World!";
+        QPalette palette=displayTextEdit->palette();
+        const QColor&color=
+        QColorDialog::getColor(palette.color(QPalette::Text),
+                                    this, tr("設定背景顏色"));
+        if(color.isValid())
+        {
+            palette.setColor(QPalette::Text,color);
+            displayTextEdit->setPalette(palette);
+        }
+    }
+    if(btn==filePushBtn)
+    {
+        QString fileName =QFileDialog::getOpenFileName(this,tr("開啟檔案"),".",
+                                                        tr("任何檔案(*.*)"
+                                                        ";;文字檔(*.txt)"
+                                                        ";;XML檔(*.xml)"));
+        displayTextEdit->setText(fileName);
+    }
+    if(btn==progressPushBtn)
+    {
+        QProgressDialog progress(tr("正在複製檔案..."),
+                                tr("取消"),
+                                0,
+                                10000,
+                                 this);
+        progress.setWindowTitle(tr("進度對話盒"));
+        progress.show();
+        for(int i=0;i<10000;i++)
+        {
+            progress.setValue(i);
+            qApp->processEvents();
+            qDebug()<<i;
+        }
+        //_sleep(10000);
+    }
+}
+
